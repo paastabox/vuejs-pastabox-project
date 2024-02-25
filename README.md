@@ -1,5 +1,5 @@
 # Movie App
-Movies APP using THE MovieDB API For VueJS Courses
+Movies App utilisant l'API de The Movie Database (TMDb).
 
 *Célian Lesage - BUT2 APP*
 
