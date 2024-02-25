@@ -1,42 +1,64 @@
 <template>
-    <div>
-        <!-- list of movies -->
-        <v-card variant="outlined" v-for="movie in movies">
-            <v-card-title>
+    <div v-for="movie in movieFiltered" style="padding: 10px">
+        <v-card class="text-center" variant="outlined" style="padding: 10px">
+            <v-img :src="photo_path + movie.poster_path" :alt="movie.title" width="300px" class="mx-auto"
+                aspect-ratio="1" />
+            <v-card-title class=text-center>
                 {{ movie.title }}
             </v-card-title>
-            <v-img :src="config.url.image + movie.poster_path" />
+            <v-card-text class=text-center>
+                {{ movie.overview }}
+            </v-card-text>
+            <v-btn variant="outlined" @click="sendMovie(movie)">
+                Plus d'infos
+            </v-btn>
         </v-card>
     </div>
 </template>
 
 <script>
 import config from '@/config.json';
+import MovieDetail from '@/components/MovieDetail.vue';
 
 export default {
     name: 'MoviesList',
-    data() {
-        return {
-            movies: []
+
+    props: {
+        movies: {
+            type: Array,
+            required: true
+        },
+        searchMovie: {
+            type: String,
+            required: true
         }
     },
-    beforeMount() {
-        console.log('beforeMount');
-        const options = {
-            method: 'GET',
-            headers: {
-                accept: 'application/json',
-                Authorization: 'Bearer ' + config.api_key
-            }
-        };
 
-        fetch(config.url.movie_list, options)
-            .then(response => response.json())
-            .then(data => {
-                this.movies = data.results;
-            })
-            .catch(error => console.error(error));     
-    }
+    data() {
+        return {
+            photo_path: config.url.photo_path
+        };
+    },
+
+    computed: {
+        movieFiltered() {
+            console.log(this.searchMovie);
+            if (this.searchMovie) {
+                return this.movies.filter(movie => {
+                    return movie.title.toLowerCase().includes(this.searchMovie.toLowerCase());
+                });
+            }
+            return this.movies;
+        }
+    },
+    
+    components: { MovieDetail },
+
+    methods: {
+        sendMovie(movie) {
+            this.$emit('showMovieDetailEmit', movie);
+        }
+    },
 }
 
 </script>
